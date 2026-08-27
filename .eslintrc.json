@@ -1,0 +1,35 @@
+{
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "ignorePatterns": [
+    "src/assets/**",
+    "src/components/common/**",
+    "src/components/form-table/**",
+    "src/components/header/**",
+    "src/components/icon/**",
+    "src/components/icon-font/**",
+    "src/components/label/**",
+    "src/components/multi-date-picker/**",
+    "src/components/system-icon/**",
+    "src/components/system-log/**",
+    "src/components/system-role/**",
+    "src/components/tree/**",
+    "src/components/upload-image/**",
+    "src/data/**",
+    "src/utils/download.ts",
+    "src/utils/loadable.tsx",
+    "src/utils/tool.ts",
+    "src/app/layout/layout-main.tsx",
+    "src/app/core/router/**"
+  ],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-wrapper-object-types": "off",
+    "@typescript-eslint/no-empty-object-type": "off",
+    "@typescript-eslint/no-unsafe-function-type": "off",
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
+    "import/no-anonymous-default-export": "off",
+    "react-hooks/exhaustive-deps": "warn",
+    "@next/next/no-img-element": "off",
+    "jsx-a11y/alt-text": "warn"
+  }
+}

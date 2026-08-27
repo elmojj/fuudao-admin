@@ -1,0 +1,20 @@
+/*
+  (C) Copyright 2023-2024 by Shanghai Huishui Tech Co., LTD.  All rights reserved.
+
+  This computer source code and related instructions and comments are the
+  unpublished confidential and proprietary information of Shanghai Huishui
+  Tech Co., LTD. and are protected under applicable copyright and trade
+  secret law.  They may not be disclosed to, copied or used by any third
+  party without the prior written consent of Shanghai Huishui Tech Co., LTD.
+*/
+
+// eslint-disable-next-line import/prefer-default-export
+export function LoadingContent(percent?: number) {
+  return (
+    <span style={{ textAlign: 'center' }}>
+      {percent ?? 0}%
+      <br />
+      <span style={{ fontSize: '14px' }}>分析中</span>
+    </span>
+  );
+}

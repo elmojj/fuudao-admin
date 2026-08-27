@@ -1,0 +1,47 @@
+name: CI
+
+# en: Set the event to pull request event and push event of the master branch
+# zh: Event 设置为 master 分支的 pull request 事件和 push 事件
+on:
+  push:
+    branches: 
+      - '*'
+  pull_request:
+    branches: 
+      - '*'
+
+permissions:
+  contents: write
+
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code (检出代码)
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (设置 node 版本)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.1.0
+
+      - name: Install yarn (安装 yarn)
+        uses: mskelton/setup-yarn@v1
+
+      - name: Install dependencies (安装依赖)
+        run: yarn install
+
+      - name: Build (构建)
+        run: yarn deploy
+        
+      - name: rsync deployments
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzrP
+          path: build/
+          remote_path: ${{ secrets.SERVER_DIR}}
+          remote_host: ${{ secrets.HOST }}
+          remote_port: ${{ secrets.SERVER_PORT }}
+          remote_user: ${{ secrets.USER }}
+          remote_key: ${{ secrets.PASSWORD }}
+

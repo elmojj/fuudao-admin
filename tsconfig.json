@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "craco.config.js",
+    "src/index.tsx",
+    "src/app.tsx",
+    "src/app/core/router/**",
+    "src/app/layout/layout-main.tsx",
+    "src/components/common/**",
+    "src/components/form-table/**",
+    "src/components/header/**",
+    "src/components/icon/**",
+    "src/components/icon-font/**",
+    "src/components/label/**",
+    "src/components/multi-date-picker/**",
+    "src/components/system-icon/**",
+    "src/components/system-log/**",
+    "src/components/system-role/**",
+    "src/components/tree/**",
+    "src/components/upload-image/**"
+  ]
+}

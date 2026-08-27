@@ -1,0 +1,16 @@
+/*
+  (C) Copyright 2023 by Shanghai Huishui Tech Co., LTD.  All rights reserved.
+
+  This computer source code and related instructions and comments are the
+  unpublished confidential and proprietary information of Shanghai Huishui
+  Tech Co., LTD. and are protected under applicable copyright and trade
+  secret law.  They may not be disclosed to, copied or used by any third
+  party without the prior written consent of Shanghai Huishui Tech Co., LTD.
+*/
+
+@font-face {
+  font-family: 'iconfont';
+  src: url('~src/assets/iconfont/iconfont.woff2') format('woff2'),
+    url('~src/assets/iconfont/iconfont.woff') format('woff'),
+    url('~src/assets/iconfont/iconfont.ttf') format('truetype');
+}
