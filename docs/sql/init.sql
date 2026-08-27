@@ -320,7 +320,45 @@ CREATE INDEX idx_order_lottery_result_order_id ON order_lottery_result (order_id
 CREATE INDEX idx_order_lottery_result_item_id ON order_lottery_result (grab_bag_item_id);
 
 -- ============================================================
--- 14. 后台管理员
+-- 14. C 端商城补充表
+-- ============================================================
+CREATE TABLE banner (
+    id          VARCHAR(64) PRIMARY KEY,
+    image_url   TEXT NOT NULL,
+    link_url    TEXT,
+    sort        INTEGER NOT NULL DEFAULT 0,
+    status      SMALLINT NOT NULL DEFAULT 1,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE cart_item (
+    id              VARCHAR(64) PRIMARY KEY,
+    user_id         VARCHAR(64) NOT NULL REFERENCES app_user (id) ON DELETE CASCADE,
+    good_id         VARCHAR(64) NOT NULL REFERENCES bag (id) ON DELETE CASCADE,
+    sku_id          VARCHAR(64),
+    quantity        INTEGER NOT NULL DEFAULT 1,
+    checked         BOOLEAN NOT NULL DEFAULT TRUE,
+    specifications  JSONB,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE bag_comment (
+    id          VARCHAR(64) PRIMARY KEY,
+    bag_id      VARCHAR(64) NOT NULL REFERENCES bag (id) ON DELETE CASCADE,
+    user_id     VARCHAR(64) NOT NULL REFERENCES app_user (id),
+    order_id    VARCHAR(64) REFERENCES orders (id),
+    rating      SMALLINT NOT NULL DEFAULT 5,
+    content     TEXT,
+    images      JSONB,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE bag_category ADD COLUMN IF NOT EXISTS icon TEXT;
+ALTER TABLE bag_category ADD COLUMN IF NOT EXISTS status SMALLINT NOT NULL DEFAULT 1;
+
+-- ============================================================
+-- 15. 后台管理员
 -- ============================================================
 CREATE TABLE system_user (
     id                  VARCHAR(64) PRIMARY KEY DEFAULT uuid_generate_v4()::TEXT,
@@ -357,6 +395,10 @@ INSERT INTO item_level (id, level_name, level_type, status, sort) VALUES
 
 INSERT INTO bag_category (id, category_name) VALUES
     ('cat_default', '默认分类');
+
+INSERT INTO banner (id, image_url, link_url, sort, status) VALUES
+    ('banner_001', '/logo.png', '', 1, 1),
+    ('banner_002', '/logo.png', '', 2, 1);
 
 -- 默认管理员: admin / admin123 (bcrypt 需在应用层替换，此处仅占位)
 INSERT INTO system_user (id, user_name, password_hash, user_email, department_name)

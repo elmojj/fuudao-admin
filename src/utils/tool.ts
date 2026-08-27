@@ -10,7 +10,7 @@
 
 import dayjs, { Dayjs } from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { ExternalUserInfo } from 'src/app/request/login';
+import { ExternalUserInfo } from 'src/app/request/login/types';
 import { Theme } from 'src/styles/theme/theme';
 
 dayjs.extend(duration);

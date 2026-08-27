@@ -10,21 +10,22 @@
 
 import { AES } from 'crypto-js';
 import enc from 'crypto-js/enc-utf8';
-import JSEncrypt from 'jsencrypt';
 import { getRequest, postRequest } from 'src/app/host-app';
 import { MenuInfo } from 'src/data/menu-data';
 import { registerSystemFeatures } from 'src/data/system-feature';
-import { APIResponse } from '../api/api-response';
+import type { CaptchaResponse, LoginResponse } from './types';
 
 const PUBLIC_KEY =
   'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC8Qa+e4QjNlfSR55RGHeltMDqYJR1UCCpWzqY0xV9rgcGKXB3PzvBwn5PUUzPehGHHDXrpU4/gmcDZCjJly9hoI9NPKtjhi3bRFV7aHX0B4ms0S2ImYKtdRR7uSQfJPQFwr6fVOCs2bcPcJMYmSuJZXRKO/Fr7ZD5Uhlkcg5KGzQIDAQAB';
 
 export function pwdEncrypt(pwd: string): string {
-  const jsEncrypt = new JSEncrypt({});
+  if (typeof window === 'undefined') return pwd;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const JSEncrypt = require('jsencrypt') as typeof import('jsencrypt');
+  const jsEncrypt = new JSEncrypt.default({});
   jsEncrypt.setPublicKey(PUBLIC_KEY);
   const encrypted = jsEncrypt.encrypt(pwd);
   if (encrypted === false) return pwd;
-
   return encrypted;
 }
 
@@ -48,36 +49,14 @@ export const pingLoginRequest = () => {
   }, 300000);
 };
 
-/** 第三方关联信息 */
-export interface ExternalUserInfo {
-  canLogin?: boolean;
-  dept?: string;
-  id?: string;
-  loginName?: string;
-  mobile?: string;
-}
+export type {
+  CaptchaResponse,
+  ExternalUserInfo,
+  LoginResponse,
+  UserInfoType,
+} from './types';
 
-export interface UserInfoType {
-  userEmail: string;
-  userName: string;
-  userPhone: string;
-  userSex: string;
-  departmentId: string;
-  departmentName: string;
-  externalUserInfo?: ExternalUserInfo;
-}
-
-export interface LoginResponse extends APIResponse {
-  sessionId?: string;
-}
-
-export interface captchaResponse extends APIResponse {
-  url?: string;
-  content?: string;
-}
-
-export async function requestLogin(
-  username: string,
+export async function requestLogin(  username: string,
   password: string,
   captcha?: string,
 ): Promise<LoginResponse> {
@@ -105,7 +84,7 @@ export async function requestLogin(
   });
 }
 
-export async function getCaptcha(): Promise<captchaResponse> {
+export async function getCaptcha(): Promise<CaptchaResponse> {
   return getRequest({
     code: 'system/user/getCaptcha',
     params: {},
@@ -125,7 +104,7 @@ export async function getCaptcha(): Promise<captchaResponse> {
   });
 }
 
-export async function logout(): Promise<APIResponse> {
+export async function logout(): Promise<{ status: 'Success' | 'Fail'; errorMessage?: string }> {
   const res: any = await postRequest({
     code: '/logout',
   });
