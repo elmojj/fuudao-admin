@@ -23,6 +23,7 @@ export const ORDER_STATUS_TO_DB: Record<string, number> = {
   SHIPPED: 7,
   COMPLETED: 9,
   CANCELLED: 4,
+  EXPIRED: 10,
 };
 
 export const ORDER_STATUS_FROM_DB: Record<number, string> = {
@@ -35,6 +36,7 @@ export const ORDER_STATUS_FROM_DB: Record<number, string> = {
   7: 'SHIPPED',
   8: 'CANCELLED',
   9: 'COMPLETED',
+  10: 'EXPIRED',
 };
 
 export function parseOrderStatusFilter(status: unknown): number[] | null {
