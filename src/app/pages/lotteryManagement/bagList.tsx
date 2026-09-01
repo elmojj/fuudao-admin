@@ -214,6 +214,14 @@ export default function BagList() {
       valueType: 'option',
       render: (_, record) => [
         <Button
+          key="detail"
+          onClick={() => {
+            navigate(`/lotteryManagement/bagDetail?id=${record.id}`);
+          }}
+        >
+          详情
+        </Button>,
+        <Button
           key="link"
           onClick={() => {
             navigate('/lotteryManagement/createBag', {

@@ -19,6 +19,7 @@ import {
   handleBagBoxState,
   handleBagBoxUnlock,
 } from './handlers/mall/box';
+import { handleBagDraw } from './handlers/mall/bag-draw';
 import {
   handleBagOrderCancel,
   handleBagOrderCreate,
@@ -46,8 +47,29 @@ import {
   handleMallUserProfile,
   handleMallUserProfileUpdate,
 } from './handlers/mall/user';
+import {
+  handleAlbumItems,
+  handleAlbumSeries,
+  handleAlbumSummary,
+  handleDrawChanceBalance,
+  handleDrawChanceLogs,
+  handleGachaDraw,
+  handleGachaLogs,
+  handleGachaPity,
+  handleGachaPool,
+  handleGachaPools,
+  handleRankList,
+  handleScoreBalance,
+  handleScoreLogs,
+  handleShareBind,
+  handleShareInvite,
+  handleTaskClaim,
+  handleTaskList,
+  handleUserTitle,
+} from './handlers/mall/gacha';
 import { ensureArcadeTables } from './arcade/migrate';
 import { ensureBagOrderTables } from './bag-order/migrate';
+import { ensureGachaTables } from './gacha/migrate';
 import {
   handleArcadeBoxLock,
   handleArcadeBoxLocks,
@@ -89,6 +111,9 @@ const PUBLIC_GET_PATHS = new Set([
   'bag/comments',
   'bag/comment/detail',
   'bag/box/state',
+  'gacha/pool',
+  'gacha/pools',
+  'rank/list',
 ]);
 
 function normalizePath(path: string) {
@@ -116,6 +141,7 @@ export async function handleMallApi(path: string, request: Request) {
   await ensureMallTables();
   await ensureArcadeTables();
   await ensureBagOrderTables();
+  await ensureGachaTables();
 
   const method = request.method;
   const normalizedPath = normalizePath(path);
@@ -161,6 +187,17 @@ export async function handleMallApi(path: string, request: Request) {
         return mallFail(result.message, result.code);
       }
       return mallOk(result.state);
+    }
+    if (normalizedPath === 'gacha/pool') {
+      const pool = await handleGachaPool(params);
+      if ('error' in pool) return mallFail(pool.error, pool.code ?? 1);
+      return mallOk(pool);
+    }
+    if (normalizedPath === 'gacha/pools') {
+      return mallOk(await handleGachaPools());
+    }
+    if (normalizedPath === 'rank/list') {
+      return mallOk(await handleRankList(null, params));
     }
   }
 
@@ -225,6 +262,18 @@ export async function handleMallApi(path: string, request: Request) {
       return mallFail(result.message, result.code, httpStatus);
     }
     return mallOk(result.state);
+  }
+
+  if (normalizedPath === 'bag/draw' && method === 'POST') {
+    const result = await handleBagDraw(userId, body);
+    if ('code' in result && result.code) {
+      const msg =
+        'message' in result && typeof result.message === 'string'
+          ? result.message
+          : '开赏失败';
+      return mallFail(msg, Number(result.code));
+    }
+    return mallOk(result);
   }
 
   if (normalizedPath === 'bag/order/create' && method === 'POST') {
@@ -326,6 +375,81 @@ export async function handleMallApi(path: string, request: Request) {
       if (hasError(result)) return mallFail(result.error);
       return mallOk(result);
     }
+  }
+  if (normalizedPath === 'user/title' && method === 'PUT') {
+    const result = await handleUserTitle(userId, body);
+    if ('error' in result && result.error) return mallFail(result.error);
+    return mallOk(result);
+  }
+
+  if (normalizedPath === 'gacha/pity' && method === 'GET') {
+    return mallOk(await handleGachaPity(userId, params));
+  }
+  if (normalizedPath === 'gacha/draw' && method === 'POST') {
+    const result = await handleGachaDraw(userId, body);
+    if ('code' in result && result.code) {
+      const msg =
+        'message' in result && typeof result.message === 'string'
+          ? result.message
+          : '抽赏失败';
+      return mallFail(msg, Number(result.code));
+    }
+    return mallOk(result);
+  }
+  if (normalizedPath === 'gacha/logs' && method === 'GET') {
+    return mallOk(await handleGachaLogs(userId, params));
+  }
+  if (normalizedPath === 'draw-chance/balance' && method === 'GET') {
+    return mallOk(await handleDrawChanceBalance(userId));
+  }
+  if (normalizedPath === 'draw-chance/logs' && method === 'GET') {
+    return mallOk(await handleDrawChanceLogs(userId, params));
+  }
+  if (normalizedPath === 'task/list' && method === 'GET') {
+    return mallOk(await handleTaskList(userId));
+  }
+  if (normalizedPath === 'task/claim' && method === 'POST') {
+    const result = await handleTaskClaim(userId, body);
+    if ('code' in result && result.code) {
+      const msg =
+        'message' in result && typeof result.message === 'string'
+          ? result.message
+          : '领取失败';
+      return mallFail(msg, Number(result.code));
+    }
+    return mallOk(result);
+  }
+  if (normalizedPath === 'album/summary' && method === 'GET') {
+    return mallOk(await handleAlbumSummary(userId));
+  }
+  if (normalizedPath === 'album/series' && method === 'GET') {
+    return mallOk(await handleAlbumSeries(userId, params));
+  }
+  if (normalizedPath === 'album/items' && method === 'GET') {
+    return mallOk(await handleAlbumItems(userId, params));
+  }
+  if (normalizedPath === 'score/balance' && method === 'GET') {
+    return mallOk(await handleScoreBalance(userId));
+  }
+  if (normalizedPath === 'score/logs' && method === 'GET') {
+    return mallOk(await handleScoreLogs(userId, params));
+  }
+  if (normalizedPath === 'rank/list' && method === 'GET') {
+    return mallOk(await handleRankList(userId, params));
+  }
+  if (normalizedPath === 'share/invite' && method === 'GET') {
+    return mallOk(await handleShareInvite(userId));
+  }
+  if (normalizedPath === 'share/bind' && method === 'POST') {
+    const result = await handleShareBind(userId, body);
+    if ('code' in result && result.code) {
+      const msg =
+        'message' in result && typeof result.message === 'string'
+          ? result.message
+          : '绑定失败';
+      return mallFail(msg, Number(result.code));
+    }
+    return mallOk(result);
   }
   if (normalizedPath === 'addresses' && method === 'GET') {
     return mallOk(await handleMallAddressList(userId));

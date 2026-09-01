@@ -4,6 +4,8 @@ import next from 'next';
 import { WebSocketServer, type WebSocket } from 'ws';
 import { ensureArcadeTables } from './src/server/arcade/migrate';
 import { ensureBagOrderTables } from './src/server/bag-order/migrate';
+import { ensureGachaTables } from './src/server/gacha/migrate';
+import { snapshotRanks } from './src/server/gacha/rank';
 import { expirePendingBagOrders } from './src/server/bag-order/bag-order-service';
 import { cleanupExpiredLocks, getBoxState } from './src/server/box/box-service';
 import { boxWsHub } from './src/server/box/box-ws-hub';
@@ -20,6 +22,7 @@ async function main() {
   await ensureMallTables();
   await ensureArcadeTables();
   await ensureBagOrderTables();
+  await ensureGachaTables();
   await app.prepare();
 
   const server = createServer(async (req, res) => {
@@ -97,6 +100,15 @@ async function main() {
       console.error('Bag order expire error:', error);
     });
   }, 10_000);
+
+  snapshotRanks().catch((error) => {
+    console.error('Initial rank snapshot error:', error);
+  });
+  setInterval(() => {
+    snapshotRanks().catch((error) => {
+      console.error('Rank snapshot error:', error);
+    });
+  }, 10 * 60 * 1000);
 
   server.listen(port, hostname, () => {
     console.log(`> Ready on http://${hostname}:${port}`);

@@ -46,7 +46,15 @@ async function mapUser(row: Record<string, unknown>) {
   const tagsRes = await query(`SELECT * FROM user_tag WHERE user_id = $1`, [
     userId,
   ]);
+  const collectionRes = await query(
+    `SELECT COUNT(*)::int AS collected FROM gacha_collection WHERE user_id = $1`,
+    [userId],
+  );
+  const totalItemsRes = await query(
+    `SELECT COUNT(*)::int AS total FROM gacha_item WHERE status = 1`,
+  );
   const addressRow = addressRes.rows[0];
+  const titles = Array.isArray(row.unlocked_titles) ? row.unlocked_titles : [];
   return {
     id: userId,
     phoneNumber: toStr(row.phone_number),
@@ -60,6 +68,20 @@ async function mapUser(row: Record<string, unknown>) {
     userGroupName: toStr(row.user_group_name),
     createdAt: formatTime(row.created_at),
     updatedAt: formatTime(row.updated_at),
+    drawChances: Number(row.draw_chances ?? 0),
+    totalDraws: Number(row.total_draws ?? 0),
+    totalScore: Number(row.total_score ?? 0),
+    seasonScore: Number(row.season_score ?? 0),
+    honorScore: Number(row.honor_score ?? 0),
+    weekMaxLucky: Number(row.week_max_lucky ?? 0),
+    pitySrCount: Number(row.pity_sr_count ?? 0),
+    pitySsrCount: Number(row.pity_ssr_count ?? 0),
+    fragments: Number(row.fragments ?? 0),
+    equippedTitle: toStr(row.equipped_title) || undefined,
+    inviteCode: toStr(row.invite_code),
+    collectionCount: Number(collectionRes.rows[0]?.collected ?? 0),
+    collectionTotal: Number(totalItemsRes.rows[0]?.total ?? 0),
+    titles,
     stats: {
       buyAmountTotal: Number(row.buy_amount_total || 0),
       buyTotal: Number(row.buy_total || 0),

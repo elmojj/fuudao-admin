@@ -40,6 +40,20 @@ export interface GetUserListType {
     cateVal: string;
     tagName: string;
   }[];
+  drawChances?: number;
+  totalDraws?: number;
+  totalScore?: number;
+  seasonScore?: number;
+  honorScore?: number;
+  weekMaxLucky?: number;
+  pitySrCount?: number;
+  pitySsrCount?: number;
+  fragments?: number;
+  equippedTitle?: string;
+  inviteCode?: string;
+  collectionCount?: number;
+  collectionTotal?: number;
+  titles?: { id: string; name: string }[];
 }
 export default async function getUserList(
   params: ParamsType & {

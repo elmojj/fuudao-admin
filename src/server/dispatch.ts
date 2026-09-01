@@ -12,6 +12,22 @@ import {
   handleItemList,
 } from './handlers/bag';
 import {
+  handleBagBoxStateAdmin,
+  handleDashboardStats,
+  handleGachaChanceGrant,
+  handleGachaChanceLogList,
+  handleGachaDrawLogList,
+  handleGachaItemCreateOrUpdate,
+  handleGachaItemDelete,
+  handleGachaItemList,
+  handleGachaPoolCreateOrUpdate,
+  handleGachaPoolList,
+  handleGachaRankSnapshotList,
+  handleGachaScoreGrant,
+  handleGachaScoreLogList,
+  handleUserCollectionList,
+} from './handlers/gacha-admin';
+import {
   handleLogisticsBatchDelivery,
   handleLogisticsBatchSign,
   handleLogisticsDelivery,
@@ -84,6 +100,34 @@ export async function handleFeaturesV1(path: string, request: Request) {
       return ok(await handleUserList(body));
     case 'user/get':
       return ok(await handleUserGet(body));
+    case 'dashboard/stats':
+      return ok(await handleDashboardStats());
+    case 'gacha_pool/list':
+      return ok(await handleGachaPoolList(body));
+    case 'gacha_pool/createOrUpdate':
+      return ok(await handleGachaPoolCreateOrUpdate(body));
+    case 'gacha_item/list':
+      return ok(await handleGachaItemList(body));
+    case 'gacha_item/createOrUpdate':
+      return ok(await handleGachaItemCreateOrUpdate(body));
+    case 'gacha_item/delete':
+      return ok(await handleGachaItemDelete(body));
+    case 'gacha_draw_log/list':
+      return ok(await handleGachaDrawLogList(body));
+    case 'gacha_chance_log/list':
+      return ok(await handleGachaChanceLogList(body));
+    case 'gacha_score_log/list':
+      return ok(await handleGachaScoreLogList(body));
+    case 'gacha_rank_snapshot/list':
+      return ok(await handleGachaRankSnapshotList(body));
+    case 'gacha_chance/grant':
+      return ok(await handleGachaChanceGrant(body));
+    case 'gacha_score/grant':
+      return ok(await handleGachaScoreGrant(body));
+    case 'user/collection/list':
+      return ok(await handleUserCollectionList(body));
+    case 'bag/box/state':
+      return ok(await handleBagBoxStateAdmin(body));
     default:
       return fail(`Unknown features API: ${path}`);
   }

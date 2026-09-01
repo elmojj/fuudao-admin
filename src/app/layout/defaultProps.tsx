@@ -1,4 +1,4 @@
-import { CrownFilled, SmileFilled, TabletFilled } from '@ant-design/icons';
+import { CrownFilled, GiftOutlined, SmileFilled, TabletFilled } from '@ant-design/icons';
 
 export default {
   route: {
@@ -8,6 +8,19 @@ export default {
         path: '/panel/dashboard',
         name: '数据概览',
         icon: <SmileFilled />,
+      },
+      {
+        name: '抽赏运营',
+        icon: <GiftOutlined />,
+        path: '/gachaManagement',
+        routes: [
+          { path: '/gachaManagement/poolList', name: '赏池管理', icon: <CrownFilled /> },
+          { path: '/gachaManagement/itemList', name: '赏品管理', icon: <CrownFilled /> },
+          { path: '/gachaManagement/drawLogList', name: '抽赏记录', icon: <CrownFilled /> },
+          { path: '/gachaManagement/chanceLogList', name: '次数流水', icon: <CrownFilled /> },
+          { path: '/gachaManagement/scoreLogList', name: '积分流水', icon: <CrownFilled /> },
+          { path: '/gachaManagement/rankSnapshotList', name: '排行榜快照', icon: <CrownFilled /> },
+        ],
       },
       // {
       //   path: '/panel',

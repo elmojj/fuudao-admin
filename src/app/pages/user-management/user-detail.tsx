@@ -10,10 +10,13 @@ import {
   Button,
   Descriptions,
   DescriptionsProps,
+  InputNumber,
+  Modal,
   Radio,
   Space,
   Table,
   Typography,
+  message,
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
@@ -25,6 +28,7 @@ import getOrderList, {
   logisticsOrder,
 } from 'src/app/request/order-list';
 import { GetUserListType, getUserById } from 'src/app/request/user-manager';
+import { grantGachaChance } from 'src/app/request/gacha-admin';
 import {
   selectBagListMap,
   selectLotteryListMap,
@@ -387,6 +391,81 @@ export default function UserDetail() {
           currentUserInfo?.address?.area ?? ''
         }${currentUserInfo?.address?.address ?? ''}`}</Typography.Text>
       ),
+    },
+    {
+      key: 'g1',
+      label: '抽赏次数',
+      children: (
+        <Space>
+          <span>{currentUserInfo?.drawChances ?? 0}</span>
+          <Button
+            size="small"
+            onClick={() => {
+              let amount = 2;
+              Modal.confirm({
+                title: '补发抽赏次数',
+                content: (
+                  <InputNumber
+                    min={1}
+                    defaultValue={2}
+                    onChange={(v) => {
+                      amount = Number(v || 1);
+                    }}
+                  />
+                ),
+                onOk: async () => {
+                  if (!currentUserInfo?.id) return;
+                  const res = await grantGachaChance(
+                    currentUserInfo.id,
+                    amount,
+                    'admin_grant',
+                  );
+                  if (res.status === 'Success') {
+                    message.success(`已补发，余额 ${res.balance}`);
+                    const u = await getUserById(currentUserInfo.id);
+                    if (u.status === 'Success') setCurrentUserInfo(u.value);
+                  } else message.error(res.errorMessage);
+                },
+              });
+            }}
+          >
+            补发
+          </Button>
+        </Space>
+      ),
+    },
+    {
+      key: 'g2',
+      label: '累计积分',
+      children: <p>{currentUserInfo?.totalScore ?? 0}</p>,
+    },
+    {
+      key: 'g3',
+      label: '本周欧气',
+      children: <p>{currentUserInfo?.weekMaxLucky ?? 0}</p>,
+    },
+    {
+      key: 'g4',
+      label: '图鉴进度',
+      children: (
+        <p>
+          {currentUserInfo?.collectionCount ?? 0} / {currentUserInfo?.collectionTotal ?? 0}
+        </p>
+      ),
+    },
+    {
+      key: 'g5',
+      label: '保底进度',
+      children: (
+        <p>
+          SR {currentUserInfo?.pitySrCount ?? 0}/30 · SSR {currentUserInfo?.pitySsrCount ?? 0}/100
+        </p>
+      ),
+    },
+    {
+      key: 'g6',
+      label: '邀请码',
+      children: <Typography.Text copyable>{currentUserInfo?.inviteCode || '-'}</Typography.Text>,
     },
   ];
 

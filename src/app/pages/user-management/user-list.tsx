@@ -123,6 +123,26 @@ export default function UserList() {
       width: 100,
     },
     {
+      title: '抽赏次数',
+      dataIndex: 'drawChances',
+      search: false,
+      width: 90,
+    },
+    {
+      title: '积分',
+      dataIndex: 'totalScore',
+      search: false,
+      width: 80,
+    },
+    {
+      title: '图鉴',
+      dataIndex: 'collectionCount',
+      search: false,
+      width: 80,
+      render: (_, record) =>
+        `${(record as any).collectionCount ?? 0}/${(record as any).collectionTotal ?? 0}`,
+    },
+    {
       title: '总金额(元)',
       dataIndex: 'buyAmountTotal',
       search: false,
